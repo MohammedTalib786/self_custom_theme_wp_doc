@@ -1,0 +1,105 @@
+    <div class="code_wrapper">
+        <pre><code>&lt;?php
+
+//  Added Excerpt to Default WP Post
+function add_excerpt_to_default_post() {
+    add_post_type_support('post', 'excerpt');
+}
+add_action('init', 'add_excerpt_to_default_post');
+
+
+//  Embed the SVG type media in the backend
+function cc_mime_types($mimes) {
+    $mimes['svg'] = 'image/svg+xml';
+    return $mimes;
+}
+add_filter('upload_mimes', 'cc_mime_types');
+
+
+//  Register Menus
+function notandas_register_menus() {
+    register_nav_menu('primary', 'Primary Menu');
+}
+add_action('after_setup_theme', 'notandas_register_menus');
+
+
+//  Disable Default Custom Styling of CF7
+add_filter('wpcf7_load_css', '__return_false');
+
+
+//  Enable support for featured images
+add_theme_support('post-thumbnails');
+
+
+//  Add a new Custom Post Type 'Projects'
+function register_projects_custom_post_type() {
+    $labels = [
+        'name'                  =&gt; 'Projects',
+        'Post type general name',
+        'textdomain',
+        'singular_name'         =&gt; 'Project',
+        'Post type singular name',
+        'textdomain',
+        'menu_name'             =&gt; 'Projects',
+        'Admin Menu text',
+        'textdomain',
+        'name_admin_bar'        =&gt; 'Project',
+        'Add New on Toolbar',
+        'textdomain',
+        'add_new'               =&gt; 'Add New',
+        'textdomain',
+        'add_new_item'          =&gt; 'Add New Project',
+        'textdomain',
+        'new_item'              =&gt; 'New Project',
+        'textdomain',
+        'edit_item'             =&gt; 'Edit Project',
+        'textdomain',
+        'view_item'             =&gt; 'View Project',
+        'textdomain',
+        'all_items'             =&gt; 'All Projects',
+        'textdomain',
+        'search_items'          =&gt; 'Search Projects',
+        'textdomain',
+        'not_found'             =&gt; 'No projects found!',
+        'textdomain',
+        'not_found_in_trash'    =&gt; 'No projects found in Trash.',
+        'textdomain',
+    ];
+
+    $args = [
+        'labels'             =&gt; $labels,
+        'public'             =&gt; true,
+        'has_archive'        =&gt; true,
+        'rewrite'            =&gt; ['slug' =&gt; 'projects'],
+        'show_in_rest'       =&gt; true, // enable Gutenberg editor and REST API
+        'supports'           =&gt; ['title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'],
+        'menu_position'      =&gt; 5,
+        'menu_icon'          =&gt; 'dashicons-portfolio',
+        // 'taxonomies'         =&gt; ['category'],
+    ];
+
+    register_post_type('project', $args);
+}
+add_action('init', 'register_projects_custom_post_type');
+
+
+// &gt;&gt;&gt;&gt;&gt; Shorthand of Register Post Type (can be try Next Time):
+// &gt;&gt;&gt;&gt;&gt; Also we can customize it as per our need
+
+// function register_book_post_type() {
+//     register_post_type('book', [
+//         'labels' =&gt; [
+//             'name' =&gt; 'Books',
+//             'singular_name' =&gt; 'Book',
+//         ],
+//         'public' =&gt; true,
+//         'has_archive' =&gt; true,
+//         'supports' =&gt; ['title', 'editor', 'thumbnail'],
+//         'rewrite' =&gt; ['slug' =&gt; 'books'],
+//         'show_in_rest' =&gt; true,
+//     ]);
+// }
+// add_action('init', 'register_book_post_type');
+
+// &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; ENDS Add a new Custom Post Type 'Projects'</code></pre>
+    </div>

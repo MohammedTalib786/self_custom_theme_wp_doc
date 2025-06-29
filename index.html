@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Custom Theme WordPress - Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <button class="scrollToTopBtn "><i class="fa-solid fa-chevron-up"></i></button>
+    <h1>Custom Theme Development WordPress - Documentation</h1>
+    <hr>
+
+
+    <h2>🛠️ Introduction to Custom Theme Development - WordPress</h2>
+    <p>A WordPress theme controls the visual presentation of your website, including layout, styles, and templates for
+        different types of content.</p>
+
+    <p>A custom theme means creating your own theme from scratch (or a starter theme) instead of modifying an existing
+        one. This gives you full control over every aspect.</p>
+
+
+    <h2>🧱 Setting Up the Theme</h2>
+
+    <h3>Step 1: Create Theme Directory</h3>
+
+
+    <div class="code_wrapper">
+        <pre><code>/your-site/wp-content/themes/my-custom-theme</code></pre>
+    </div>
+
+    <h3>📂 Step 2: Basic Directory Structure (Recommended)</h3>
+
+
+    <div class="code_wrapper">
+
+        <pre><code>my-custom-theme/
+│
+├── assets/
+│   ├── css/
+│   ├── js/
+│   └── images/
+│
+├── template-parts/
+│   └── content-newsletter.php // can be used as multiple times once called using: get_template_part('template-parts/content', 'newsletter_temp');
+│
+├── templates/
+│   ├── home.php // can be used for templates for the static pages
+│   ├── about.php
+│   └── contact.php
+│
+├── style.css 
+├── functions.php
+├── index.php 
+├── header.php
+├── footer.php
+├── single.php // default blog (post) type - Detail page
+├── single-project.php // custom post type - Detail page
+├── page.php // fallback for static pages
+├── 404.php 
+├── search.php
+├── taxonomy-project-category-all.php // for taxonomy detail page
+├── taxonomy-project-category-commercial.php
+├── screenshot.png // for Theme Thumbnail image in WP Dashboard</code></pre>
+    </div>
+
+
+
+    <h2>📝 style.css – Theme Metadata</h2>
+
+    <p>Every theme must have a style.css with this block at the top:</p>
+    <p>The code should be commented at the Top</p>
+
+    <div class="code_wrapper">
+        <pre><code>/*
+Theme Name: My Custom Theme
+Theme URI: https://example.com // Not Required
+Author: Your Name
+Author URI: https://example.com // Not Required
+Description: A custom theme built from scratch.
+Version: 1.0 
+License: GNU General Public License v2 or later // Not Required
+Text Domain: my-custom-theme // Not Required
+*/</code></pre>
+    </div>
+
+    <p>Even if you don’t add styles here, this file is required for the theme to be recognized by WordPress.</p>
+
+
+    <h2>🗂️ Template Files & Hierarchy</h2>
+
+    <h3>✅ How WordPress Detects Page Templates in Subfolders</h3>
+
+    <p>WordPress <b>will detect a page template</b> in a subfolder like <code>/template/</code> only if:</p>
+
+
+    <ol>
+        <li>The file has the proper header comment at the top: (BEST PRACTICE for Pages)</li>
+        <li>It's located anywhere within your theme, including subdirectories. (Not Recommended)</li>
+    </ol>
+    <p>As long as this file has the Template Name: comment, it will appear in the Page Template dropdown when editing a
+        page in the admin.</p>
+
+
+    <h3>🧠 Why It Works for Page Templates (But Not Others)?</h3>
+
+    <ul>
+        <li>Page Templates: WordPress scans the entire theme directory, including subfolders, looking for files with
+            <code>Template Name:</code> in the comments.
+        </li>
+        <li>Single/Archive Templates: WordPress uses a strict template hierarchy and looks only in the root of the
+            theme, not in subfolders.</li>
+    </ul>
+
+
+    <table>
+        <thead>
+            <tr>
+                <th>Template Type</th>
+                <th>Works in Subfolder?</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>single.php</code>, <code>single-project.php</code></td>
+                <td>❌ No</td>
+                <td>Must be in theme root</td>
+            </tr>
+            <tr>
+                <td><code>page.php</code>, <code>archive.php</code></td>
+                <td>❌ No</td>
+                <td>Must be in theme root</td>
+            </tr>
+            <tr>
+                <td>Page Template (with <code>Template Name</code>)</td>
+                <td>✅ Yes</td>
+                <td>Can be in <code>/template/</code> folder</td>
+            </tr>
+            <tr>
+                <td>Partials (used with <code>get_template_part()</code>)</td>
+                <td>✅ Yes</td>
+                <td>Manually included</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+    <h3>Minimum Template: index.php</h3>
+
+
+    <p><code>index.php</code> is Served as a fallback when no specific template matches.</p>
+
+    <div class="code_wrapper">
+        <pre><code>>>> If viewing a single post:
+
+single-post.php
+→ single.php
+→ singular.php
+→ index.php
+
+- page.php is for Pages only.
+- single.php is for Posts (and custom post types if single-{type}.php is not defined).
+- singular.php is a universal fallback for any single item (page, post, or CPT).
+- Then at last its index.php when no specific template matches.</code></pre>
+    </div>
+
+
+    <h3>📍 Additional Notes</h3>
+    <p>You don’t need to create every file — WordPress will always fall back safely to index.php.</p>
+
+
+    <h2>📄 Working With Static Pages</h2>
+
+    <div class="code_wrapper">
+        <pre><code>/your-site/wp-content/themes/my-custom-theme/templates/home.php </code></pre>
+    </div>
+
+    <p>Define Template name at the top of the page and use get_header() method to get the header and get_footer() to get
+        the footer in the page.</p>
+
+    <div class="code_wrapper">
+        <pre><code>eg: about.php
+
+&lt;?php
+/**
+ * Template Name: About Us Page
+ */
+get_header();
+?&gt;
+
+&lt;--  Code Block Goes Here... --&gt;
+
+&lt;?php
+get_footer();
+?&gt;</code></pre>
+    </div>
+
+    <p>Then inside the wordpress (Dashboard > pages > About us) page we can select the Template and publish the page</p>
+
+
+    <h2>📢 Important Functions for <code>functions.php</code></h2>
+
+    <p>These are some common and usefull functions when developing any site from scratch</p>
+
+    <h3>Added Excerpt to Default WP Post</h3>
+    <div class="code_wrapper">
+        <pre><code>function add_excerpt_to_default_post() {
+    add_post_type_support('post', 'excerpt');
+}
+add_action('init', 'add_excerpt_to_default_post');</code></pre>
+    </div>
+
+    <h3>Embed the SVG type media in the backend</h3>
+
+    <div class="code_wrapper">
+        <pre><code>function cc_mime_types($mimes) {
+    $mimes['svg'] = 'image/svg+xml';
+    return $mimes;
+}
+add_filter('upload_mimes', 'cc_mime_types');</code></pre>
+    </div>
+
+
+    <h3>Register Menus</h3>
+    <div class="code_wrapper">
+        <pre><code>function notandas_register_menus() {
+    register_nav_menu('primary', 'Primary Menu');
+}
+add_action('after_setup_theme', 'notandas_register_menus');</code></pre>
+    </div>
+
+    <h3>Disable Default Custom Styling of CF7</h3>
+    <div class="code_wrapper">
+        <pre><code>add_filter('wpcf7_load_css', '__return_false');</code></pre>
+    </div>
+
+    <h3>Enable support for featured images</h3>
+    <div class="code_wrapper">
+        <pre><code>add_theme_support('post-thumbnails');</code></pre>
+    </div>
+
+
+    <h3>Add a new Custom Post Type 'Projects'</h3>
+    <div class="code_wrapper">
+        <pre><code>function register_projects_custom_post_type() {
+    $labels = [
+        'name'                  =&gt; 'Projects',
+        'Post type general name',
+        'textdomain',
+        'singular_name'         =&gt; 'Project',
+        'Post type singular name',
+        'textdomain',
+        'menu_name'             =&gt; 'Projects',
+        'Admin Menu text',
+        'textdomain',
+        'name_admin_bar'        =&gt; 'Project',
+        'Add New on Toolbar',
+        'textdomain',
+        'add_new'               =&gt; 'Add New',
+        'textdomain',
+        'add_new_item'          =&gt; 'Add New Project',
+        'textdomain',
+        'new_item'              =&gt; 'New Project',
+        'textdomain',
+        'edit_item'             =&gt; 'Edit Project',
+        'textdomain',
+        'view_item'             =&gt; 'View Project',
+        'textdomain',
+        'all_items'             =&gt; 'All Projects',
+        'textdomain',
+        'search_items'          =&gt; 'Search Projects',
+        'textdomain',
+        'not_found'             =&gt; 'No projects found!',
+        'textdomain',
+        'not_found_in_trash'    =&gt; 'No projects found in Trash.',
+        'textdomain',
+    ];
+
+    $args = [
+        'labels'             =&gt; $labels,
+        'public'             =&gt; true,
+        'has_archive'        =&gt; true,
+        'rewrite'            =&gt; ['slug' =&gt; 'projects'],
+        'show_in_rest'       =&gt; true, // enable Gutenberg editor and REST API
+        'supports'           =&gt; ['title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'],
+        'menu_position'      =&gt; 5,
+        'menu_icon'          =&gt; 'dashicons-portfolio',
+        // 'taxonomies'         =&gt; ['category'],
+    ];
+
+    register_post_type('project', $args);
+}
+add_action('init', 'register_projects_custom_post_type');</code></pre>
+    </div>
+
+
+
+
+    <h3>Shorthand of Register Post Type:</h3>
+    <p>Also we can customize it as per our need</p>
+    <div class="code_wrapper">
+        <pre><code>function register_book_post_type() {
+     register_post_type('book', [
+         'labels' =&gt; [
+             'name' =&gt; 'Books',
+             'singular_name' =&gt; 'Book',
+         ],
+        'public' =&gt; true,
+         'has_archive' =&gt; true,
+         'supports' =&gt; ['title', 'editor', 'thumbnail'],
+         'rewrite' =&gt; ['slug' =&gt; 'books'],
+         'show_in_rest' =&gt; true,
+     ]);
+ }
+ add_action('init', 'register_book_post_type');</code></pre>
+    </div>
+
+
+    <h2>👉 Example Usecase of a <code>header.php</code> File</h2>
+
+
+    <div class="code_wrapper">
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+
+&lt;head&gt;
+
+    &lt;!-- List all the links of css files here at the Top --&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;link rel="shortcut icon" href="" type="image/x-icon" /&gt;
+    &lt;title&gt;Welcome to Notandas Realty&lt;/title&gt;
+    &lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/bootstrap.min.css"&gt;
+    &lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/swiper-bundle.min.css"&gt;
+    &lt;link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"&gt;
+    &lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/style.css"&gt;
+    &lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/animation.css"&gt;
+    &lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/innerpage.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" /&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;!-- Header with Hamburger Button --&gt;
+    &lt;header&gt;
+        &lt;nav class="navbar bg-transparent mx-3 my-2 "&gt;
+            &lt;div class="container-fluid"&gt;
+                &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Search Icon --&gt;
+                &lt;div class="search_icon_header"&gt;
+                    &lt;a href="#" class="main_search_icon"&gt;
+                        &lt;i class="fas fa-search"&gt;&lt;/i&gt;
+                    &lt;/a&gt;
+                &lt;/div&gt;
+
+                &lt;!-- Calling the default search form (if not created a searchform.php in your theme) --&gt;
+                &lt;div class="search_form_cont hide "&gt;
+                    &lt;?php get_search_form() ?&gt;
+                &lt;/div&gt;
+
+                &lt;a class="logo" href="&lt;?php echo site_url(); ?&gt;"&gt;
+                    &lt;img src="&lt;?php echo get_template_directory_uri() ?&gt;/images/notandasLogo.svg" class="img-fluid" /&gt;
+                &lt;/a&gt;
+                &lt;button class="navbar-toggler menu-btn ms-auto" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"&gt;
+                &lt;/button&gt;
+                &lt;div class="offcanvas offcanvas-end custom-offcanvas" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel"&gt;
+                    &lt;div class="menu-panel"&gt;
+                        &lt;div class="offcanvas-header border-0 position-absolute top-0 end-0 m-lg-3 m-1"&gt;
+                            &lt;button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"&gt;&lt;/button&gt;
+                        &lt;/div&gt;
+                        &lt;div class="offcanvas-body p-lg-0 px-lg-5"&gt;
+
+                            &lt;!-- Using wp_nav_menu function to call the menu from the wp dashboard --&gt;
+                            &lt;?php
+                            wp_nav_menu([
+                                'theme_location' =&gt; 'primary',
+                                'depth' =&gt; 2,
+                                'container' =&gt; false,
+                                'menu_class' =&gt; 'navbar-nav menu-list main_menu',
+                            ]);
+                            ?&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="flex-grow-1"&gt;&lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/nav&gt;
+    &lt;/header&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;</code></pre>
+    </div>
+
+
+    <h2>👉 Example Usecase of a <code>footer.php</code> File</h2>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;!-- Footer --&gt;
+&lt;footer class="pt-5 footer"&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="row"&gt;
+
+            &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 1 --&gt;
+            &lt;div class="col-lg-3 col-md-6 col-12 footerCol pe-lg-5"&gt;
+                &lt;div class="footerLogo"&gt;
+                    &lt;a href="&lt;?php echo site_url(); ?&gt;"&gt;&lt;img src="&lt;?php echo get_field('footer_logo', 'option'); ?&gt;" alt="" class="img-fluid"&gt;&lt;/a&gt;
+                &lt;/div&gt;
+                &lt;div class="hr-footer"&gt;&lt;/div&gt;
+                &lt;div class="footerDetails"&gt;
+                    &lt;div class="d-flex justify-content-between align-items-center"&gt;
+                        &lt;h6 class="mb-3"&gt;&lt;?php echo get_field('contact_us_txt', 'option'); ?&gt;&lt;/h6&gt;
+                        &lt;img src="&lt;?php echo get_field('contact_us_icon', 'option'); ?&gt;" class="img-fluid"&gt;
+                    &lt;/div&gt;
+                    &lt;p&gt;&lt;?php echo get_field('contact_us_addr', 'option'); ?&gt;&lt;/p&gt;
+                    &lt;a href="tel:&lt;?php echo get_field('contact_us_num', 'option'); ?&gt;"&gt;
+                        &lt;?php echo get_field('contact_us_num', 'option'); ?&gt;
+                    &lt;/a&gt;
+                    &lt;a href="mailto:&lt;?php echo get_field('contact_us_email', 'option'); ?&gt;"&gt;
+                        &lt;p&gt;&lt;?php echo get_field('contact_us_email', 'option'); ?&gt;&lt;/p&gt;
+                    &lt;/a&gt;
+                &lt;/div&gt;
+                &lt;div class="mt-3"&gt;
+                    &lt;ul class="d-flex socialIcons"&gt;
+
+                        &lt;?php
+                        $contact_us_social_icons = get_field('contact_us_social_icons', 'option');
+                        foreach ($contact_us_social_icons as $contact_us_social_icon) {
+                        ?&gt;
+                            &lt;li&gt;&lt;a href="&lt;?php echo $contact_us_social_icon['cont_us_link'] ?&gt;"&gt;&lt;img src="&lt;?php echo $contact_us_social_icon['cont_us_icon'] ?&gt;"&gt;&lt;/a&gt;&lt;/li&gt;
+                        &lt;?php
+                        }
+                        ?&gt;
+
+                    &lt;/ul&gt;
+
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 2 --&gt;
+            &lt;div class="col-lg-4 col-md-6 col-12 footerCol ps-lg-5"&gt;
+
+                &lt;?php
+                $quick_links = get_field('quick_links', 'option');
+
+                foreach ($quick_links as $quick_link) {
+                ?&gt;
+                    &lt;h5 class="mb-4"&gt;&lt;a href="&lt;?php echo $quick_link['ql_links'] ?&gt;"&gt;&lt;?php echo $quick_link['ql_text'] ?&gt;&lt;/a&gt;&lt;/h5&gt;
+                &lt;?php
+                }
+                ?&gt;
+
+            &lt;/div&gt;
+
+
+            &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 3 --&gt;
+            &lt;div class="col-lg-2 col-md-6 col-12 footerCol pe-lg-5"&gt;
+                &lt;h5 class="mb-3"&gt;&lt;?php echo get_field('crafted_elegance_title_text', 'option'); ?&gt;&lt;/h5&gt;
+                &lt;ul&gt;
+                    &lt;?php
+                    $crafted_elegance_reps = get_field('crafted_elegance_rep', 'option');
+                    foreach ($crafted_elegance_reps as $crafted_elegance_rep) {
+                    ?&gt;
+                        &lt;li&gt;&lt;a href="&lt;?php echo $crafted_elegance_rep['crafted_elegance_link'] ?&gt;"&gt;&lt;?php echo $crafted_elegance_rep['crafted_elegance_txt'] ?&gt;&lt;/a&gt;&lt;/li&gt;
+                    &lt;?php
+                    }
+                    ?&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+
+            &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 4 --&gt;
+            &lt;div class="col-lg-3 col-md-6 col-12 footerCol ps-lg-5"&gt;
+                &lt;h4 class="mb-3"&gt;&lt;?php echo get_field('lets_connect_txt', 'option') . "&lt;br&gt;" ?&gt;&lt;/h4&gt;
+
+                &lt;div class="contactForm"&gt;
+                    &lt;?php echo do_shortcode('[contact-form-7 id="444f4e7" title="Contact form Footer"]') ?&gt;
+                &lt;/div&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class="line mt-lg-5"&gt;&lt;/div&gt;
+
+        &lt;div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start py-1 copyright"&gt;
+            &lt;p&gt;© &lt;script&gt;
+                    document.write(new Date().getFullYear())
+                &lt;/script&gt; Notandas Realty. All Rights Reserved.&lt;/p&gt;
+            &lt;a href="https://kwebmaker.com/" target="_blank"&gt;Kwebmaker&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/footer&gt;
+
+&lt;!-- List all the Scripting Files here at the Bottom of the Document --&gt;
+&lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+&lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/swiper-bundle.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://unpkg.com/aos@2.3.1/dist/aos.js"&gt;&lt;/script&gt;
+&lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/script.js"&gt;&lt;/script&gt;
+&lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/additional_script.js"&gt;&lt;/script&gt;</code></pre>
+    </div>
+
+    <h2>Inside the <code>index.php</code> You can make it blank</h2>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php
+    // >>>>>>>>>>> Code Block Goes Here
+?&gt;</code></pre>
+    </div>
+
+
+    <h2>Using <code>get_template_directory_uri</code> to get theme URL:</h2>
+
+    <p>It will return this URL:</p>
+
+    <div class="code_wrapper">
+        <pre><code>/your-site/wp-content/themes/my-custom-theme</code></pre>
+    </div>
+
+    <p>We can use this function to get the theme URL to use it in some places eg:</p>
+
+
+    <div class="code_wrapper">
+        <pre><code>&lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/bootstrap.min.css"&gt;
+&lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/swiper-bundle.min.css"&gt;
+&lt;link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"&gt;
+&lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/style.css"&gt;
+&lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/animation.css"&gt;
+&lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/innerpage.css"&gt;</code></pre>
+    </div>
+
+
+    <h2>Global Site Setting for Header and Footer</h2>
+
+
+    <h3>⚙︎ Enable Option Pages</h3>
+    <p>We can directly create option pages from acf backend (PRO Only feature)</p>
+
+    <p>Then after create fields and sub-fields for it in the acf and embed data</p>
+
+    <h3>✅ Fetch the Data</h3>
+
+    <p>Then after fetch the data inside your <code>header.php</code> OR <code>footer.php</code> file using:
+        <br><code>get_field('footer_logo', 'option');</code> <code>the_field('footer_logo', 'option');</code>
+    </p>
+
+    <p>with an extra argument of <code>'option'</code> while fetching</p>
+
+
+    <h2>📍 Fetching ACF Fields data in the backend:</h2>
+
+    <h3>📝 Fetching Basic Fields</h3>
+    <p>❌ We can use this method to fetch the basic fields eg: (text, textarea, img, etc)</p>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;h2&gt;&lt;?php echo get_field('what_we_stand_sec_title') ?&gt;&lt;/h2&gt;</code></pre>
+    </div>
+
+    <p>✔️ But using this <code>if():</code> statement method is a good practice (should use it.)</p>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php if(get_field('who_we_are_sec_img')): ?&gt;
+    &lt;img src="&lt;?php echo the_field('who_we_are_sec_img') ?&gt;" alt="" class="img-fluid"&gt;
+&lt;?php endif; ?&gt;</code></pre>
+    </div>
+
+    <h3>📝 Fetching Repeater Field</h3>
+
+    <p>❌ We can use this (foreach) method But its not a Good Practice:</p>
+
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php
+$crafted_elegance_reps = get_field('crafted_elegance_rep', 'option');
+foreach ($crafted_elegance_reps as $crafted_elegance_rep) {
+?&gt;
+    &lt;li&gt;&lt;a href="&lt;?php echo $crafted_elegance_rep['crafted_elegance_link'] ?&gt;"&gt;&lt;?php echo $crafted_elegance_rep['crafted_elegance_txt'] ?&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;?php
+}
+?&gt;</code></pre>
+    </div>
+
+
+    <p>✔️ Using while loop method to fetch a slider's data:</p>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php
+if(have_rows('what_we_stand_slider')):
+    while(have_rows('what_we_stand_slider')): the_row();
+?&gt;
+
+    &lt;!-- Slider ~ --&gt;
+    &lt;div class="swiper-slide"&gt;
+        &lt;div class="image-wrapper"&gt;
+            &lt;?php if(get_sub_field('slider_img')): ?&gt;
+                &lt;img src="&lt;?php echo the_sub_field('slider_img') ?&gt;" alt=""&gt;
+            &lt;?php endif; ?&gt;
+        &lt;/div&gt;
+        &lt;div class="caption"&gt;
+            &lt;div class="headText col-lg-4 col-md-8 text-center mx-auto mb-4"&gt;
+                &lt;?php if(get_sub_field('slider_title')): ?&gt;
+                    &lt;h5&gt;&lt;?php echo the_sub_field('slider_title') ?&gt;&lt;/h5&gt;
+                &lt;?php endif; ?&gt;
+                &lt;?php if(get_sub_field('slider_desc')): ?&gt;
+                    &lt;p&gt;&lt;?php echo the_sub_field('slider_desc') ?&gt;&lt;/p&gt;
+                &lt;?php endif; ?&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+&lt;?php
+    endwhile;
+else:
+?&gt;
+
+&lt;h4&gt;No Silder Found!&lt;/h4&gt;
+
+&lt;?php
+endif;
+?&gt;</code></pre>
+    </div>
+
+
+    <h2>📝 Fetch Posts (Default and Custom) in a Listing page (eg: Blog Listing)</h2>
+
+    <h3>Fetch all Blog Posts using built-in Wordpress Query:</h3>
+    <p>This will work as a loop for testing pupose you can use it inside an <code>ul > li</code> Then paste it in some
+        container</p>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php
+// if pagination needed
+// $paged = get_query_var('paged') ? get_query_var('paged') : 1; // can be only applicable for built in wp funcs | else need to register for ourselve one
+$blog_posts_arr = [
+    'post_type' =&gt; 'post', // just the post type name change if it is a custom post
+    // eg: 'post_type' =&gt; 'project',
+    'posts_per_page' =&gt; 6, // -1 for Infinity
+    'order_by' =&gt; 'date',
+    'order' =&gt;  'ASC', // OR DESC
+    // enable if pagination needed
+    // 'paged' =&gt; $paged, // eg: 1 can use no.s for debugging
+    // 'category__in' =&gt; [10], // can be fetched as per the post ID, need to pass an array
+];
+
+// Enable if filter needed as per the categories
+// if ($_GET['select-category']) {
+//     $blog_posts_arr['category__in'] = [$_GET['select-category']];
+// }
+
+$blog_fetch_query = new WP_Query($blog_posts_arr);
+
+if ($blog_fetch_query-&gt;have_posts()):
+    while ($blog_fetch_query-&gt;have_posts()): $blog_fetch_query-&gt;the_post();
+?&gt;
+        &lt;div class="col-lg-4 col-md-6 mb-4"&gt;
+            &lt;div class="blogImg"&gt;
+
+                &lt;!-- Featured img --&gt;
+                &lt;img src="&lt;?php echo the_post_thumbnail_url() ?&gt;" alt="" class="img-fluid"&gt;
+
+                &lt;!-- Category --&gt;
+                &lt;span class="badge-top-right"&gt;
+                    &lt;?php
+                    $categories = get_the_category();
+                    if (!empty($categories)) {
+                        foreach ($categories as $cat) {
+                            echo '&lt;span&gt;' . esc_html($cat-&gt;name) . '&lt;/span&gt; ';
+                        }
+                    }
+                    ?&gt;
+                &lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class="blogContent"&gt;
+                &lt;!-- Post Date --&gt;
+                &lt;h6&gt;&lt;?php echo get_the_date('F j, Y'); ?&gt;&lt;/h6&gt;
+                &lt;!-- Post Link --&gt;
+                &lt;a href="&lt;?php echo get_permalink() ?&gt;"&gt;
+                    &lt;!-- Post Title --&gt;
+                    &lt;h4&gt;&lt;?php echo the_title() ?&gt;&lt;/h4&gt;
+                &lt;/a&gt;
+                &lt;!-- Post Excerpt --&gt;
+                &lt;p&gt;&lt;?php echo the_excerpt() ?&gt;&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;?php
+    endwhile;
+    wp_reset_postdata(); // very important to reset!
+else:
+    ?&gt;
+
+&lt;?php
+endif;
+?&gt;</code></pre>
+    </div>
+
+
+    <h3>Add Pagination in the Posts</h3>
+
+    <p>Don't put it in the same container. Create a new below it then paste the code:</p>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php if ($blog_fetch_query-&gt;max_num_pages &gt; 1):  ?&gt;
+    &lt;div class="pagination"&gt;
+        &lt;?php
+        echo paginate_links([
+            'total' =&gt; $blog_fetch_query-&gt;max_num_pages,
+            'current' =&gt; $paged,
+            'prev_text' =&gt; '&lt;i class="fa-solid fa-chevron-left"&gt;&lt;/i&gt;',
+            'next_text' =&gt; '&lt;i class="fa-solid fa-chevron-right"&gt;&lt;/i&gt;',
+            'type' =&gt; 'list'
+        ])
+        ?&gt;
+    &lt;/div&gt;
+&lt;?php endif; ?&gt;</code></pre>
+    </div>
+
+
+    <h3>Add Filters as per the Category (if needed):</h3>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;form method="GET"&gt;
+    &lt;select name="select-category" class="form-select" id="sortSelect" onchange="this.form.submit()"&gt;
+        &lt;option value=""&gt;Filter&lt;/option&gt;
+        &lt;?php
+        $categories_to_filt = get_categories();
+        foreach ($categories_to_filt as $category):
+        ?&gt;
+            &lt;option
+                value="&lt;?php echo $category-&gt;term_id ?&gt;"
+                &lt;?php
+                if ($_GET['select-category'] == $category-&gt;term_id) echo 'selected="selected"' ?&gt;&gt;
+                &lt;?php echo $category-&gt;name ?&gt;&lt;/option&gt;
+        &lt;?php
+        endforeach;
+        ?&gt;
+    &lt;/select&gt;
+&lt;/form&gt;</code></pre>
+    </div>
+
+
+    <h2>Fetch Posts (Default and Custom) in its Detail page</h2>
+
+    <h3>✅ Create the Single Template File in the root directory</h3>
+
+
+    <p>WordPress uses the <code>single-{post_type}.php</code> file to render single posts of a custom post type.</p>
+
+    <h3>Example:</h3>
+
+    <p>If your custom post type is project, create:</p>
+
+    <div class="code_wrapper">
+        <pre><code>/wp-content/themes/your-theme/single-project.php</code></pre>
+    </div>
+
+    <p>If it's for the default blog posts:</p>
+
+    <div class="code_wrapper">
+        <pre><code>/wp-content/themes/your-theme/single.php</code></pre>
+    </div>
+
+
+    <h3>✅ Basic Template Structure</h3>
+
+    <p>Inside <code>single-book.php</code> or <code>single.php</code> (based on your post type):</p>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php
+if (have_posts()):
+    while (have_posts()): the_post();
+?&gt;
+        &lt;!-- innerBanner --&gt;
+        &lt;section class="homeBanner"&gt;
+            &lt;div class="container-fluid p-0"&gt;
+                &lt;div class="innerSlide"&gt;
+                    &lt;img src="&lt;?php echo get_template_directory_uri() ?&gt;/images/blog-detail.jpg" class="img-fluid w-100" /&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;!-- Anchorlink Section --&gt;
+        &lt;section class="linkSection d-none d-lg-block"&gt;
+            &lt;div class="container"&gt;
+                &lt;div class="d-flex justify-content-between align-items-center links"&gt;
+                    &lt;ul class="d-flex align-items-center mb-0 ps-0"&gt;
+                        &lt;li&gt;&lt;a href="#"&gt;Blogs&lt;/a&gt;&lt;/li&gt;
+                    &lt;/ul&gt;
+                    &lt;div class="d-flex"&gt;
+                        &lt;a href="contact.html" class="cta"&gt;Reach out&lt;/a&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;!-- Blog content --&gt;
+        &lt;section class="pt-4"&gt;
+            &lt;div class="container"&gt;
+                &lt;div class="row"&gt;
+                    &lt;div class="d-flex justify-content-between align-items-center mb-3"&gt;
+                        &lt;div class="blogContent"&gt;
+                            &lt;!-- &lt;h6 class="mb-0"&gt;October 5, 2023&lt;/h6&gt; --&gt;
+                            &lt;h6 class="mb-0"&gt;&lt;?php echo get_the_date('F j, Y') ?&gt;&lt;/h6&gt;
+                        &lt;/div&gt;
+                        &lt;div class="share"&gt;
+                            &lt;button&gt;Share&lt;/button&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;div class="row col-lg-12 mb-5"&gt;
+                    &lt;div class="blogContent"&gt;
+
+                        &lt;h3&gt;&lt;?php echo the_title() ?&gt;&lt;/h3&gt;
+
+                        &lt;?php echo the_content() ?&gt;
+
+                    &lt;/div&gt;
+
+                    &lt;div class="blogContent"&gt;
+                        &lt;?php if (get_field('blockquote_text')): ?&gt;
+                            &lt;blockquote&gt;&lt;?php echo the_field('blockquote_text')  ?&gt;&lt;/blockquote&gt;
+                        &lt;?php endif; ?&gt;
+
+                        &lt;?php if (get_field('below_bq_image')): ?&gt;
+                            &lt;div class="imgCaption"&gt;
+                                &lt;img src="&lt;?php echo the_field('below_bq_image')  ?&gt;" class="img-fluid w-100 mt-3" alt=""&gt;
+                            &lt;/div&gt;
+                        &lt;?php endif; ?&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+
+    &lt;?php
+    endwhile;
+    wp_reset_postdata();
+else:
+?&gt;
+    &lt;h4&gt;No Post Found!&lt;/h4&gt;
+
+&lt;?php
+endif;
+?&gt;</code></pre>
+    </div>
+
+
+    <p>Make sure the ACF fields (<code>author_name</code>, <code>publisher</code>, etc.) exist and are assigned to the
+        correct post type.</p>
+
+
+    <h3>✅ Ensure Permalink Settings Are Correct</h3>
+
+    <p>If you’ve just registered a custom post type, go to:</p>
+    <p>Dashboard → Settings → Permalinks → Save Changes</p>
+    <p>(to flush rewrite rules)</p>
+
+
+    <h2>Add Taxonomy Pages:</h2>
+
+    <h3>✅ Understand What WordPress Loads Automatically</h3>
+
+    <p>WordPress follows a template hierarchy to decide which file to load:</p>
+
+
+    <p>In WordPress, taxonomy archive pages are automatically created when you register a taxonomy. These archive pages
+        list all posts (or custom post types) assigned to a specific taxonomy term.</p>
+
+    <h3>For default category taxonomy:</h3>
+
+
+    <ul>
+        <li>category-slug.php</li>
+        <li>category-id.php</li>
+        <li>category.php</li>
+        <li>archive.php</li>
+        <li>index.php</li>
+    </ul>
+
+
+    <h3>For custom taxonomy (e.g., genre):</h3>
+
+    <ul>
+        <li>taxonomy-{taxonomy}-{term}.php</li>
+        <li>taxonomy-{taxonomy}.php</li>
+        <li>taxonomy.php</li>
+        <li>archive.php</li>
+        <li>index.php</li>
+    </ul>
+
+    <p>Add the files at the root of your theme folder (Not in sub-directories as mentioned earlier multiple times)</p>
+
+    <h3>✅ Ensure You Registered the Taxonomy Correctly</h3>
+
+    <p>When registering the custom taxonomy in functions.php, be sure it’s public and has_archive:</p>
+
+    <p>or you can manually add it from wp backend from acf</p>
+
+
+    <h3>✅ Permalinks Flush (Important)</h3>
+
+    <p>After creating your custom taxonomy and templates:</p>
+
+    <ul>
+        <li>Go to Settings > Permalinks and click Save Changes (no need to change anything).</li>
+        <li>This flushes rewrite rules.</li>
+    </ul>
+
+
+
+
+    <h2>🔍 Built-in WP Search Functionality</h2>
+
+    <h3>✅ Create the Search Form</h3>
+
+    <p>You can either use the default form via <code>get_search_form()</code> or create your own custom form.</p>
+
+    <p><b>Option A: Default Form</b></p>
+
+    <p>Place this in your <code>header.php</code>, <code>sidebar.php</code>, or anywhere you want:</p>
+
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php get_search_form(); ?&gt;</code></pre>
+    </div>
+
+    <p>As for example we've used it in our <code>header.php</code></p>
+
+    <p><b>Option B: Custom Form</b></p>
+    <p>Create a file: <code>searchform.php</code> in your theme root:</p>
+
+
+    <div class="code_wrapper">
+        <pre><code>&lt;form role="search" method="get" class="search-form" action="&lt;?php echo esc_url(home_url('/')); ?&gt;"&gt;
+    &lt;input type="search" class="search-field" placeholder="Search…" value="&lt;?php echo get_search_query(); ?&gt;" name="s" /&gt;
+    &lt;button type="submit" class="search-submit"&gt;Search&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+    </div>
+
+    <p>✅ Important: The name attribute must be <code>s</code> — that's how WordPress recognizes search terms.</p>
+
+
+
+    <h3>✅ Create <code>search.php</code> Template</h3>
+
+    <p>This is where the results appear. Create a <code>search.php</code> file in your theme folder:</p>
+
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php get_header() ?&gt;
+
+&lt;!-- innerBanner --&gt;
+&lt;section class="homeBanner"&gt;
+    &lt;div class="container-fluid p-0"&gt;
+        &lt;div class="innerSlide"&gt;
+            &lt;img src="&lt;?php echo get_template_directory_uri() ?&gt;/images/stand-slider.jpg" class="img-fluid w-100" /&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;h1 class="search_title"&gt;Search Results for: &lt;?php echo get_search_query() ?&gt;&lt;/h1&gt;
+
+&lt;?php
+if (have_posts()):
+    while (have_posts()): the_post();
+?&gt;
+
+        &lt;div class="cont"&gt;
+            &lt;div class="left"&gt;
+                &lt;a href="&lt;?php echo get_permalink() ?&gt;"&gt;
+                    &lt;img src="&lt;?php echo the_post_thumbnail_url() ?&gt;" alt=""&gt;
+                &lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div class="right"&gt;
+                &lt;a href="&lt;?php echo get_permalink() ?&gt;"&gt;
+                    &lt;h3&gt;&lt;?php echo the_title() ?&gt;&lt;/h3&gt;
+                    &lt;p class="cont_desc"&gt;&lt;?php echo the_excerpt() ?&gt;&lt;/p&gt;
+                    &lt;p class="cont_date"&gt;&lt;?php echo get_the_date() ?&gt;&lt;/p&gt;
+                &lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;?php
+    endwhile;
+else:
+?&gt;
+
+    &lt;h4&gt;No Data Found!&lt;/h4&gt;
+
+&lt;?php
+endif;
+?&gt;
+
+&lt;?php get_footer() ?&gt;</code></pre>
+    </div>
+
+
+
+    <h3>✅ How Search Works</h3>
+
+    <p>When a user submits the form, WordPress redirects to:</p>
+
+
+    <div class="code_wrapper">
+        <pre><code>https://yoursite.com/?s=your+search+term</code></pre>
+    </div>
+
+    <p>And loads search.php to show results.</p>
+
+
+
+
+    <h3>Modify Search Form</h3>
+    <p>You can modify the default form via a filter in your functions.php file:</p>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php
+function custom_search_placeholder($form) {
+    $form = str_replace(
+        'placeholder="Search …"',
+        'placeholder="Type your query..."',
+        $form
+    );
+
+    return $form;
+}
+add_filter('get_search_form', 'custom_search_placeholder');
+?&gt;</code></pre>
+    </div>
+
+
+
+
+    <h2>🖋️ All the Important Functions and Queries in one Table</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Function / Syntax</th>
+                <th>Context</th>
+                <th>Meaning / Description</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td><code>if() / else / endif</code></td>
+                <td>Conditional</td>
+                <td>Used to conditionally render code blocks depending on logic (like checking if fields exist).</td>
+            </tr>
+            <tr>
+                <td><code>foreach()</code></td>
+                <td>Loop Structure</td>
+                <td>Loops through arrays (e.g., ACF repeater fields or categories).</td>
+            </tr>
+            <tr>
+                <td><code>while()</code></td>
+                <td>Loop Structure</td>
+                <td>Loops through arrays and objects (e.g., Mainly used for post fetch).</td>
+            </tr>
+
+            <tr>
+                <td><code>str_replace</code></td>
+                <td>PHP Function</td>
+                <td>Replaces all occurrences of the search string with the replacement string. (PHP native)</td>
+            </tr>
+
+            <tr>
+                <td><code>get_field('field_name')</code></td>
+                <td>ACF – Fetch</td>
+                <td>Fetches a custom field value created via ACF.</td>
+            </tr>
+            <tr>
+                <td><code>the_field('field_name')</code></td>
+                <td>ACF – Output</td>
+                <td>Echoes the ACF field value directly (instead of returning it).</td>
+            </tr>
+            <tr>
+                <td><code>get_field('field_name', 'option')</code></td>
+                <td>ACF – Fetch</td>
+                <td>Fetches a custom field value created via ACF. The second param <code>'option'</code> means it's coming from the global options page.</td>
+            </tr>
+            <tr>
+                <td><code>the_field('field_name', 'option')</code></td>
+                <td>ACF – Output</td>
+                <td>Echoes the ACF field value directly (instead of returning it).</td>
+            </tr>
+
+            <tr>
+                <td><code>get_sub_field('sub_field_name')</code></td>
+                <td>ACF – Repeater</td>
+                <td>Fetches a sub-field inside the current row of a repeater field.</td>
+            </tr>
+
+            <tr>
+                <td><code>the_sub_field('sub_field_name')</code></td>
+                <td>ACF – Repeater</td>
+                <td>Echoes the sub-field's value from the current repeater row.</td>
+            </tr>
+
+            <tr>
+                <td><code>get_option()</code></td>
+                <td>Site Settings (not in your code but useful)</td>
+                <td>Fetches a value from the WordPress options table (commonly used in plugin/dev settings).</td>
+            </tr>
+
+            <tr>
+                <td><code>have_rows('repeater_name')</code></td>
+                <td>ACF – Repeater</td>
+                <td>Checks if the repeater field has any rows of data.</td>
+            </tr>
+            <tr>
+                <td><code>the_row()</code></td>
+                <td>ACF – Repeater</td>
+                <td>Iterates over each row in a repeater field (must be used inside a loop).</td>
+            </tr>
+
+            <tr>
+                <td><code>get_template_directory_uri()</code></td>
+                <td>Theme URL</td>
+                <td>Returns the absolute URL path of the theme folder (used for linking CSS, JS, and images).</td>
+            </tr>
+
+            <tr>
+                <td><code>site_url()</code></td>
+                <td>Site Root</td>
+                <td>Returns the root/base URL of the WordPress site.</td>
+            </tr>
+
+            <tr>
+                <td><code>home_url</code></td>
+                <td>Custom WP Function</td>
+                <td>Retrieves the URL for the current site’s home page.</td>
+            </tr>
+
+            <tr>
+                <td><code>add_filter</code></td>
+                <td>Custom WP Function</td>
+                <td>Adds a custom function to a specific filter hook in WordPress.</td>
+            </tr>
+
+            <tr>
+                <td><code>do_shortcode('[shortcode]')</code></td>
+                <td>Shortcode Render</td>
+                <td>Processes and renders WordPress shortcodes from inside PHP (e.g., Contact Form 7).</td>
+            </tr>
+
+            <tr>
+                <td><code>WP_Query()</code></td>
+                <td>Custom Loop</td>
+                <td>A powerful class for querying posts, pages, or custom post types with advanced filters.</td>
+            </tr>
+            <tr>
+                <td><code>have_posts()</code> / <code>the_post()</code></td>
+                <td>Post Loop</td>
+                <td>Standard loop: <code>have_posts()</code> checks for posts; <code>the_post()</code> sets up the post data. (use them with while loop).</td>
+            </tr>
+
+            <tr>
+                <td><code>the_title()</code></td>
+                <td>Post Title</td>
+                <td>Echoes the current post title in a WordPress loop. (can be used for listing page as well in detail page)</td>
+            </tr>
+
+            <tr>
+                <td><code>get_the_date('format')</code></td>
+                <td>Post Meta</td>
+                <td>Returns the date a post was published, in the specified format. You can make it empty <code>get_the_date()</code> Or can use formate eg: <code>get_the_date('F j, Y')</code> (can be used for listing page as well in detail page)</td>
+            </tr>
+
+            <tr>
+                <td><code>get_the_content()</code> / <code>the_content()</code></td>
+                <td>Post Content</td>
+                <td>Returns / Echoes the content of the current post. (can be used for listing page as well in detail page)</td>
+            </tr>
+            <tr>
+                <td><code>get_permalink()</code></td>
+                <td>Post URL</td>
+                <td>Returns the permalink (URL) of the current post. (can be used for listing page as well in detail page)</td>
+            </tr>
+            <tr>
+                <td><code>the_excerpt()</code></td>
+                <td>Post Summary</td>
+                <td>Echoes a short summary or trimmed version of the post content. (can be used for listing page as well in detail page)</td>
+            </tr>
+
+            <tr>
+                <td><code>get_post_thumbnail()</td>
+                <td>Post Featured Image</td>
+                <td>Directly Return the the post's featured image (if available) in the image tag embedded.</td>
+            </tr>
+            <tr>
+                <td><code>get_post_thumbnail_url()</code><br> or <code>the_post_thumbnail_url()</code></td>
+                <td>Post Featured Image</td>
+                <td>Returns/Echoes the URL of the post's featured image (if available).</td>
+            </tr>
+
+            <tr>
+                <td><code>get_the_category()</code></td>
+                <td>Taxonomy</td>
+                <td>Returns the categories the current post belongs to (as an array of category objects).</td>
+            </tr>
+
+            <tr>
+                <td><code>get_categories()</code></td>
+                <td>Taxonomy</td>
+                <td>Fetches all categories (terms under 'category' taxonomy).</td>
+            </tr>
+            <tr>
+                <td><code>get_query_var('')</code></td>
+                <td>For Query Parameter from the URL</td>
+                <td>only works for predefined or registered query vars in WordPress. Custom URL params eg: <code>?select-category=xyz</code> will not work unless we explicitly register them.</td>
+            </tr>
+            <tr>
+                <td><code>get_query_var('paged')</code></td>
+                <td>Pagination</td>
+                <td>Gets the current page number for pagination. Commonly used with <code>WP_Query</code>.</td>
+            </tr>
+
+            <tr>
+                <td><code>category__in</code></td>
+                <td>WP_Query Param</td>
+                <td>Filters posts in a query to include only those in the specified categories (array of IDs).</td>
+            </tr>
+            <tr>
+                <td><code>post_type</code></td>
+                <td>WP_Query Param</td>
+                <td>Specifies the type of post to fetch (e.g., 'post', 'project').</td>
+            </tr>
+            <tr>
+                <td><code>posts_per_page</code></td>
+                <td>WP_Query Param</td>
+                <td>Limits how many posts are returned in the query.</td>
+            </tr>
+            <tr>
+                <td><code>order</code> &amp; <code>orderby</code></td>
+                <td>WP_Query Param</td>
+                <td>Controls the sort order and field (e.g., date, title).</td>
+            </tr>
+            <tr>
+                <td><code>'paged'</code></td>
+                <td>WP_Query Param</td>
+                <td>Specifies the current pagination page (for paginated lists).</td>
+            </tr>
+
+            <tr>
+                <td><code>wp_reset_postdata()</code></td>
+                <td>Loop Reset</td>
+                <td>Resets global post data after using a custom <code>WP_Query</code>.</td>
+            </tr>
+            <tr>
+                <td><code>paginate_links()</code></td>
+                <td>Pagination UI</td>
+                <td>Generates pagination links for custom queries (array-based config).</td>
+            </tr>
+            <tr>
+                <td><code>get_term_link()</code></td>
+                <td>Taxonomy</td>
+                <td>Returns the archive link of a given taxonomy term (not used directly in your code, but relevant for
+                    taxonomy pages).</td>
+            </tr>
+            <tr>
+                <td><code>$_GET</code></td>
+                <td>Filtering</td>
+                <td>Used to retrieve query string values from the URL (e.g., ?select-category=4).</td>
+            </tr>
+            <tr>
+                <td><code>esc_html()</code> / <code>esc_url()</code></td>
+                <td>Sanitization</td>
+                <td>Sanitizes and escapes text/URL for safe HTML output (used when echoing dynamic content).</td>
+            </tr>
+
+            <tr>
+                <td><code>get_search_form()</code></td>
+                <td>Custom WP Function for Search Form</td>
+                <td>Returns the Default WordPress Search Form</td>
+            </tr>
+            <tr>
+                <td><code>get_search_query()</code></td>
+                <td>Custom WP Function for Search Query</td>
+                <td>Returns the search query string entered by the user.</td>
+            </tr>
+
+            <tr>
+                <td><code>&lt;script&gt;document.write(new Date().getFullYear())&lt;/script&gt;</code></td>
+                <td>JavaScript</td>
+                <td>Client-side JS that dynamically shows the current year (used for copyright).</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <h4>📍 You can refer this 👉 <a href="https://github.com/TalibKweb/cust_theme_new_proj" target="_blank">repository</a>
+        for reference of a Custom Theme in WordPress </h4>
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>

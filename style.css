@@ -1,0 +1,259 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*,
+html,
+body {
+    scroll-behavior: smooth;
+    font-family: 'Poppins';
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    color: #e0e0e0;
+    background-color: #1e1e2f;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+h1,
+h2,
+h3 {
+    color: white;
+    font-weight: 500;
+}
+
+h2 {
+    font-size: 26px;
+    line-height: 32px;
+}
+
+h3 {
+    font-size: 22px;
+    line-height: 28px;
+}
+
+h4 {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 400;
+}
+
+ul,
+li,
+p {
+    font-family: 'Montserrat';
+    font-weight: 400;
+}
+
+a {
+    color: #58a6ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+code {
+    font-family: Consolas, monospace;
+    background: #3a3a4d;
+    color: #c3e88d;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+}
+
+th,
+td {
+    border: 1px solid #44475a;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #2a2a40;
+    color: #ffffff;
+}
+
+tr:nth-child(even) {
+    background-color: #2b2b3d;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #44475a;
+    margin: 32px 0;
+}
+
+ul {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+blockquote {
+    border-left: 5px solid #58a6ff;
+    padding-left: 15px;
+    color: #ccc;
+    margin: 20px 0;
+    background: #2d2d3a;
+    padding: 10px 20px;
+    border-radius: 6px;
+}
+
+.code_wrapper {
+    position: relative;
+}
+
+button.copy_btn {
+    background: #2d2d3a;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    outline: 0;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .2s ease-in-out;
+}
+
+.code_wrapper:hover button.copy_btn {
+    opacity: 1;
+    pointer-events: all;
+    transition: all .2s ease-in-out;
+    top: 15px;
+}
+
+.copy_btn i {
+    font-size: 20px;
+    color: white;
+}
+
+pre {
+    position: relative;
+    background: #2d2d3a;
+    padding: 12px;
+    border-left: 5px solid #58a6ff;
+    border-radius: 4px;
+    max-height: 500px;
+    overflow: auto;
+    margin: 0;
+}
+
+.tooltip {
+    width: fit-content;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+    padding: 8px 10px;
+    background: #2d2d3a;
+    border-radius: 6px;
+    position: absolute;
+    top: -50px;
+    right: 0px;
+}
+
+.tooltip_hide {
+    display: none;
+}
+
+.tooltip_show {
+    display: block;
+}
+
+.scrollToTopBtn {
+    width: 3rem;
+    height: 3rem;
+    background-color: #58a6ff;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+    color: white;
+    font-size: 1.6rem;
+    border-radius: 50%;
+    position: fixed;
+    bottom: 0rem;
+    right: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .4s;
+    z-index: 99;
+}
+
+.scrollToTopBtn i {
+    font-size: 22px;
+    line-height: 26px;
+}
+
+.scrollToTopBtn:active {
+    transform: scale(.82);
+}
+
+.active {
+    bottom: 2rem;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+
+/* >>>>>>>> Webkit Scrollbar */
+
+pre::-webkit-scrollbar {
+    width: 5px;
+    height: 4px;
+    background-color: #2d2d3a;
+}
+
+pre::-webkit-scrollbar-thumb {
+    background-color: #58a6ff;
+    border-radius: 30px;
+}
+
+/* .code_wrapper::-webkit-scrollbar {
+    width: 5px;
+    height: 4px;
+    background-color: #2d2d3a;
+}
+.code_wrapper::-webkit-scrollbar-thumb {
+    background-color: #58a6ff;
+    border-radius: 30px;
+} */
+
+
+/* >>>>>>>>>>>>>>>>>> Media Queries */
+
+
+@media (max-width: 550px) {
+    h1 {
+        font-size: 30px;
+        line-height: 36px;
+    }
+
+    h2 {
+        font-size: 22px;
+        line-height: 26px;
+    }
+
+    h3 {
+        font-size: 18px;
+        line-height: 24px;
+    }
+
+    ul,
+    li,
+    p {
+        font-size: 16px;
+        line-height: 22px;
+    }
+}
