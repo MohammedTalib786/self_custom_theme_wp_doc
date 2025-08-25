@@ -241,63 +241,51 @@ add_action('after_setup_theme', 'notandas_register_menus');</code></pre>
         <pre><code>add_filter('wpcf7_load_css', '__return_false');</code></pre>
     </div>
 
+    <p>&uarr; Disable this only when Required Otherwise it will disable the Styling on the Validation Part when Fields
+        are Required for Input Otherwise use this if Default CSS not loaded &darr;</p>
+    <pre><code>add_filter('wpcf7_load_css', '__return_true');</code></pre>
+
     <h3>Enable support for featured images</h3>
     <div class="code_wrapper">
         <pre><code>add_theme_support('post-thumbnails');</code></pre>
     </div>
 
 
-    <h3>Add a new Custom Post Type 'Projects'</h3>
+    <h3>Add a new Custom Post Type 'Industries'</h3>
     <div class="code_wrapper">
-        <pre><code>function register_projects_custom_post_type() {
+        <pre><code>// >>>>>>>>>>>>>>>>> Register Industries Custom Post Type
+function register_industries_custom_post_type() {
     $labels = [
-        'name'                  =&gt; 'Projects',
-        'Post type general name',
-        'textdomain',
-        'singular_name'         =&gt; 'Project',
-        'Post type singular name',
-        'textdomain',
-        'menu_name'             =&gt; 'Projects',
-        'Admin Menu text',
-        'textdomain',
-        'name_admin_bar'        =&gt; 'Project',
-        'Add New on Toolbar',
-        'textdomain',
-        'add_new'               =&gt; 'Add New',
-        'textdomain',
-        'add_new_item'          =&gt; 'Add New Project',
-        'textdomain',
-        'new_item'              =&gt; 'New Project',
-        'textdomain',
-        'edit_item'             =&gt; 'Edit Project',
-        'textdomain',
-        'view_item'             =&gt; 'View Project',
-        'textdomain',
-        'all_items'             =&gt; 'All Projects',
-        'textdomain',
-        'search_items'          =&gt; 'Search Projects',
-        'textdomain',
-        'not_found'             =&gt; 'No projects found!',
-        'textdomain',
-        'not_found_in_trash'    =&gt; 'No projects found in Trash.',
-        'textdomain',
+        'name'                  => 'Industries',
+        'singular_name'         => 'Industry',
+        'menu_name'             => 'Industries',
+        'name_admin_bar'        => 'Industry',
+        'add_new'               => 'Add New',
+        'add_new_item'          => 'Add New Industry',
+        'new_item'              => 'New Industry',
+        'edit_item'             => 'Edit Industry',
+        'view_item'             => 'View Industry',
+        'all_items'             => 'All Industries',
+        'search_items'          => 'Search Industries',
+        'not_found'             => 'No industries found!',
+        'not_found_in_trash'    => 'No industries found in Trash.',
     ];
 
     $args = [
-        'labels'             =&gt; $labels,
-        'public'             =&gt; true,
-        'has_archive'        =&gt; true,
-        'rewrite'            =&gt; ['slug' =&gt; 'projects'],
-        'show_in_rest'       =&gt; true, // enable Gutenberg editor and REST API
-        'supports'           =&gt; ['title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'],
-        'menu_position'      =&gt; 5,
-        'menu_icon'          =&gt; 'dashicons-portfolio',
-        // 'taxonomies'         =&gt; ['category'],
+        'labels'             => $labels,
+        'public'             => true,
+        'has_archive'        => 'all-industries', // ✅ Archive uses a non-conflicting slug
+        'rewrite'            => ['slug' => 'industries'], // ✅ Single post URL is /industries/post-name
+        'show_in_rest'       => true,
+        'supports'           => ['title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'],
+        'menu_position'      => 5,
+        'menu_icon'          => 'dashicons-portfolio',
+        // 'taxonomies'      => ['category'], // Uncomment if needed
     ];
 
-    register_post_type('project', $args);
+    register_post_type('industries', $args);
 }
-add_action('init', 'register_projects_custom_post_type');</code></pre>
+add_action('init', 'register_industries_custom_post_type');</code></pre>
     </div>
 
 
@@ -344,6 +332,9 @@ add_action('init', 'register_projects_custom_post_type');</code></pre>
     &lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/animation.css"&gt;
     &lt;link rel="stylesheet" href="&lt;?php echo get_template_directory_uri(); ?&gt;/css/innerpage.css"&gt;
     &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" /&gt;
+
+    &lt;!-- Important to Add the wp_head() function just before the closing head tag, as now WordPress Consider it as a Header (Otherwise it will create complications on CF7 Form Submission on AJAX Loader) --&gt;
+    <mark>&lt;?php wp_head(); ?&gt;</mark>
 &lt;/head&gt;
 
 &lt;body&gt;
@@ -391,118 +382,126 @@ add_action('init', 'register_projects_custom_post_type');</code></pre>
                 &lt;/div&gt;
             &lt;/div&gt;
         &lt;/nav&gt;
-    &lt;/header&gt;
+    &lt;/header&gt;</code></pre>
+    </div>
+
+
+
+    <h2>👉 Example Usecase of a <code>footer.php</code> File</h2>
+
+    <div class="code_wrapper">
+        <pre><code>   &lt;!-- Footer --&gt;
+    &lt;footer class="pt-5 footer"&gt;
+        &lt;div class="container"&gt;
+            &lt;div class="row"&gt;
+
+                &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 1 --&gt;
+                &lt;div class="col-lg-3 col-md-6 col-12 footerCol pe-lg-5"&gt;
+                    &lt;div class="footerLogo"&gt;
+                        &lt;a href="&lt;?php echo site_url(); ?&gt;"&gt;&lt;img src="&lt;?php echo get_field('footer_logo', 'option'); ?&gt;" alt="" class="img-fluid"&gt;&lt;/a&gt;
+                    &lt;/div&gt;
+                    &lt;div class="hr-footer"&gt;&lt;/div&gt;
+                    &lt;div class="footerDetails"&gt;
+                        &lt;div class="d-flex justify-content-between align-items-center"&gt;
+                            &lt;h6 class="mb-3"&gt;&lt;?php echo get_field('contact_us_txt', 'option'); ?&gt;&lt;/h6&gt;
+                            &lt;img src="&lt;?php echo get_field('contact_us_icon', 'option'); ?&gt;" class="img-fluid"&gt;
+                        &lt;/div&gt;
+                        &lt;p&gt;&lt;?php echo get_field('contact_us_addr', 'option'); ?&gt;&lt;/p&gt;
+                        &lt;a href="tel:&lt;?php echo get_field('contact_us_num', 'option'); ?&gt;"&gt;
+                            &lt;?php echo get_field('contact_us_num', 'option'); ?&gt;
+                        &lt;/a&gt;
+                        &lt;a href="mailto:&lt;?php echo get_field('contact_us_email', 'option'); ?&gt;"&gt;
+                            &lt;p&gt;&lt;?php echo get_field('contact_us_email', 'option'); ?&gt;&lt;/p&gt;
+                        &lt;/a&gt;
+                    &lt;/div&gt;
+                    &lt;div class="mt-3"&gt;
+                        &lt;ul class="d-flex socialIcons"&gt;
+
+                            &lt;?php
+                            $contact_us_social_icons = get_field('contact_us_social_icons', 'option');
+                            foreach ($contact_us_social_icons as $contact_us_social_icon) {
+                            ?&gt;
+                                &lt;li&gt;&lt;a href="&lt;?php echo $contact_us_social_icon['cont_us_link'] ?&gt;"&gt;&lt;img src="&lt;?php echo $contact_us_social_icon['cont_us_icon'] ?&gt;"&gt;&lt;/a&gt;&lt;/li&gt;
+                            &lt;?php
+                            }
+                            ?&gt;
+
+                        &lt;/ul&gt;
+
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 2 --&gt;
+                &lt;div class="col-lg-4 col-md-6 col-12 footerCol ps-lg-5"&gt;
+
+                    &lt;?php
+                    $quick_links = get_field('quick_links', 'option');
+
+                    foreach ($quick_links as $quick_link) {
+                    ?&gt;
+                        &lt;h5 class="mb-4"&gt;&lt;a href="&lt;?php echo $quick_link['ql_links'] ?&gt;"&gt;&lt;?php echo $quick_link['ql_text'] ?&gt;&lt;/a&gt;&lt;/h5&gt;
+                    &lt;?php
+                    }
+                    ?&gt;
+
+                &lt;/div&gt;
+
+
+                &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 3 --&gt;
+                &lt;div class="col-lg-2 col-md-6 col-12 footerCol pe-lg-5"&gt;
+                    &lt;h5 class="mb-3"&gt;&lt;?php echo get_field('crafted_elegance_title_text', 'option'); ?&gt;&lt;/h5&gt;
+                    &lt;ul&gt;
+                        &lt;?php
+                        $crafted_elegance_reps = get_field('crafted_elegance_rep', 'option');
+                        foreach ($crafted_elegance_reps as $crafted_elegance_rep) {
+                        ?&gt;
+                            &lt;li&gt;&lt;a href="&lt;?php echo $crafted_elegance_rep['crafted_elegance_link'] ?&gt;"&gt;&lt;?php echo $crafted_elegance_rep['crafted_elegance_txt'] ?&gt;&lt;/a&gt;&lt;/li&gt;
+                        &lt;?php
+                        }
+                        ?&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+
+                &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 4 --&gt;
+                &lt;div class="col-lg-3 col-md-6 col-12 footerCol ps-lg-5"&gt;
+                    &lt;h4 class="mb-3"&gt;&lt;?php echo get_field('lets_connect_txt', 'option') . "&lt;br&gt;" ?&gt;&lt;/h4&gt;
+
+                    &lt;div class="contactForm"&gt;
+                        &lt;?php echo do_shortcode('[contact-form-7 id="444f4e7" title="Contact form Footer"]') ?&gt;
+                    &lt;/div&gt;
+
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="line mt-lg-5"&gt;&lt;/div&gt;
+
+            &lt;div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start py-1 copyright"&gt;
+                &lt;p&gt;© &lt;script&gt;
+                        document.write(new Date().getFullYear())
+                    &lt;/script&gt; Notandas Realty. All Rights Reserved.&lt;/p&gt;
+                &lt;a href="https://kwebmaker.com/" target="_blank"&gt;Kwebmaker&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/footer&gt;
+
+    &lt;!-- List all the Scripting Files here at the Bottom of the Document --&gt;
+    &lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+    &lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+    &lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/swiper-bundle.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://unpkg.com/aos@2.3.1/dist/aos.js"&gt;&lt;/script&gt;
+    &lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/script.js"&gt;&lt;/script&gt;
+    &lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/additional_script.js"&gt;&lt;/script&gt;
+
+    &lt;!-- Important to Add the wp_footer() function just before the closing body tag, as now WordPress Consider it as a Footer (Otherwise it will create complications on CF7 Form Submission on AJAX Loader) --&gt;
+    <mark>&lt;?php wp_footer(); ?&gt;</mark>
+
 &lt;/body&gt;
 
 &lt;/html&gt;</code></pre>
     </div>
 
 
-    <h2>👉 Example Usecase of a <code>footer.php</code> File</h2>
 
-    <div class="code_wrapper">
-        <pre><code>&lt;!-- Footer --&gt;
-&lt;footer class="pt-5 footer"&gt;
-    &lt;div class="container"&gt;
-        &lt;div class="row"&gt;
-
-            &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 1 --&gt;
-            &lt;div class="col-lg-3 col-md-6 col-12 footerCol pe-lg-5"&gt;
-                &lt;div class="footerLogo"&gt;
-                    &lt;a href="&lt;?php echo site_url(); ?&gt;"&gt;&lt;img src="&lt;?php echo get_field('footer_logo', 'option'); ?&gt;" alt="" class="img-fluid"&gt;&lt;/a&gt;
-                &lt;/div&gt;
-                &lt;div class="hr-footer"&gt;&lt;/div&gt;
-                &lt;div class="footerDetails"&gt;
-                    &lt;div class="d-flex justify-content-between align-items-center"&gt;
-                        &lt;h6 class="mb-3"&gt;&lt;?php echo get_field('contact_us_txt', 'option'); ?&gt;&lt;/h6&gt;
-                        &lt;img src="&lt;?php echo get_field('contact_us_icon', 'option'); ?&gt;" class="img-fluid"&gt;
-                    &lt;/div&gt;
-                    &lt;p&gt;&lt;?php echo get_field('contact_us_addr', 'option'); ?&gt;&lt;/p&gt;
-                    &lt;a href="tel:&lt;?php echo get_field('contact_us_num', 'option'); ?&gt;"&gt;
-                        &lt;?php echo get_field('contact_us_num', 'option'); ?&gt;
-                    &lt;/a&gt;
-                    &lt;a href="mailto:&lt;?php echo get_field('contact_us_email', 'option'); ?&gt;"&gt;
-                        &lt;p&gt;&lt;?php echo get_field('contact_us_email', 'option'); ?&gt;&lt;/p&gt;
-                    &lt;/a&gt;
-                &lt;/div&gt;
-                &lt;div class="mt-3"&gt;
-                    &lt;ul class="d-flex socialIcons"&gt;
-
-                        &lt;?php
-                        $contact_us_social_icons = get_field('contact_us_social_icons', 'option');
-                        foreach ($contact_us_social_icons as $contact_us_social_icon) {
-                        ?&gt;
-                            &lt;li&gt;&lt;a href="&lt;?php echo $contact_us_social_icon['cont_us_link'] ?&gt;"&gt;&lt;img src="&lt;?php echo $contact_us_social_icon['cont_us_icon'] ?&gt;"&gt;&lt;/a&gt;&lt;/li&gt;
-                        &lt;?php
-                        }
-                        ?&gt;
-
-                    &lt;/ul&gt;
-
-                &lt;/div&gt;
-            &lt;/div&gt;
-
-            &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 2 --&gt;
-            &lt;div class="col-lg-4 col-md-6 col-12 footerCol ps-lg-5"&gt;
-
-                &lt;?php
-                $quick_links = get_field('quick_links', 'option');
-
-                foreach ($quick_links as $quick_link) {
-                ?&gt;
-                    &lt;h5 class="mb-4"&gt;&lt;a href="&lt;?php echo $quick_link['ql_links'] ?&gt;"&gt;&lt;?php echo $quick_link['ql_text'] ?&gt;&lt;/a&gt;&lt;/h5&gt;
-                &lt;?php
-                }
-                ?&gt;
-
-            &lt;/div&gt;
-
-
-            &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 3 --&gt;
-            &lt;div class="col-lg-2 col-md-6 col-12 footerCol pe-lg-5"&gt;
-                &lt;h5 class="mb-3"&gt;&lt;?php echo get_field('crafted_elegance_title_text', 'option'); ?&gt;&lt;/h5&gt;
-                &lt;ul&gt;
-                    &lt;?php
-                    $crafted_elegance_reps = get_field('crafted_elegance_rep', 'option');
-                    foreach ($crafted_elegance_reps as $crafted_elegance_rep) {
-                    ?&gt;
-                        &lt;li&gt;&lt;a href="&lt;?php echo $crafted_elegance_rep['crafted_elegance_link'] ?&gt;"&gt;&lt;?php echo $crafted_elegance_rep['crafted_elegance_txt'] ?&gt;&lt;/a&gt;&lt;/li&gt;
-                    &lt;?php
-                    }
-                    ?&gt;
-                &lt;/ul&gt;
-            &lt;/div&gt;
-
-            &lt;!-- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Col 4 --&gt;
-            &lt;div class="col-lg-3 col-md-6 col-12 footerCol ps-lg-5"&gt;
-                &lt;h4 class="mb-3"&gt;&lt;?php echo get_field('lets_connect_txt', 'option') . "&lt;br&gt;" ?&gt;&lt;/h4&gt;
-
-                &lt;div class="contactForm"&gt;
-                    &lt;?php echo do_shortcode('[contact-form-7 id="444f4e7" title="Contact form Footer"]') ?&gt;
-                &lt;/div&gt;
-
-            &lt;/div&gt;
-        &lt;/div&gt;
-
-        &lt;div class="line mt-lg-5"&gt;&lt;/div&gt;
-
-        &lt;div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start py-1 copyright"&gt;
-            &lt;p&gt;© &lt;script&gt;
-                    document.write(new Date().getFullYear())
-                &lt;/script&gt; Notandas Realty. All Rights Reserved.&lt;/p&gt;
-            &lt;a href="https://kwebmaker.com/" target="_blank"&gt;Kwebmaker&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/footer&gt;
-
-&lt;!-- List all the Scripting Files here at the Bottom of the Document --&gt;
-&lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
-&lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
-&lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/swiper-bundle.min.js"&gt;&lt;/script&gt;
-&lt;script src="https://unpkg.com/aos@2.3.1/dist/aos.js"&gt;&lt;/script&gt;
-&lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/script.js"&gt;&lt;/script&gt;
-&lt;script src="&lt;?php echo get_template_directory_uri() ?&gt;/js/additional_script.js"&gt;&lt;/script&gt;</code></pre>
-    </div>
 
     <h2>Inside the <code>index.php</code> You can make it blank</h2>
 
@@ -511,6 +510,23 @@ add_action('init', 'register_projects_custom_post_type');</code></pre>
     // >>>>>>>>>>> Code Block Goes Here
 ?&gt;</code></pre>
     </div>
+
+    <h3>Or Add a Basic Snippet</h3>
+
+    <pre><code class="code_wrapper">&lt;?php
+get_header();
+?&gt;
+
+&lt;?php
+// >>>>>>>>>>> Code Block Goes Here
+$title = the_title();
+echo "&lt;h2&gt;$title&lt;/h2&gt;";
+?&gt;
+
+&lt;?php 
+get_footer();
+?&gt;</code></pre>
+
 
 
     <h2>Using <code>get_template_directory_uri</code> to get theme URL:</h2>
@@ -567,6 +583,17 @@ add_action('init', 'register_projects_custom_post_type');</code></pre>
     &lt;img src="&lt;?php echo the_field('who_we_are_sec_img') ?&gt;" alt="" class="img-fluid"&gt;
 &lt;?php endif; ?&gt;</code></pre>
     </div>
+
+
+    <h3>📝 Fetching More Fields</h3>
+
+    <p>Fetching Image OR File field (Array Type Specifically)</p>
+
+    <pre><code>echo "URL:";
+echo get_field('footer_logo', 'option')['url'];
+echo "ALT:";
+echo get_field('footer_logo', 'option')['alt'];</code></pre>
+
 
     <h3>📝 Fetching Repeater Field</h3>
 
@@ -1082,7 +1109,8 @@ add_filter('get_search_form', 'custom_search_placeholder');
             <tr>
                 <td><code>get_field('field_name', 'option')</code></td>
                 <td>ACF – Fetch</td>
-                <td>Fetches a custom field value created via ACF. The second param <code>'option'</code> means it's coming from the global options page.</td>
+                <td>Fetches a custom field value created via ACF. The second param <code>'option'</code> means it's
+                    coming from the global options page.</td>
             </tr>
             <tr>
                 <td><code>the_field('field_name', 'option')</code></td>
@@ -1157,35 +1185,43 @@ add_filter('get_search_form', 'custom_search_placeholder');
             <tr>
                 <td><code>have_posts()</code> / <code>the_post()</code></td>
                 <td>Post Loop</td>
-                <td>Standard loop: <code>have_posts()</code> checks for posts; <code>the_post()</code> sets up the post data. (use them with while loop).</td>
+                <td>Standard loop: <code>have_posts()</code> checks for posts; <code>the_post()</code> sets up the post
+                    data. (use them with while loop).</td>
             </tr>
 
             <tr>
                 <td><code>the_title()</code></td>
                 <td>Post Title</td>
-                <td>Echoes the current post title in a WordPress loop. (can be used for listing page as well in detail page)</td>
+                <td>Echoes the current post title in a WordPress loop. (can be used for listing page as well in detail
+                    page)</td>
             </tr>
 
             <tr>
                 <td><code>get_the_date('format')</code></td>
                 <td>Post Meta</td>
-                <td>Returns the date a post was published, in the specified format. You can make it empty <code>get_the_date()</code> Or can use formate eg: <code>get_the_date('F j, Y')</code> (can be used for listing page as well in detail page)</td>
+                <td>Returns the date a post was published, in the specified format. You can make it empty
+                    <code>get_the_date()</code> Or can use formate eg: <code>get_the_date('F j, Y')</code> (can be used
+                    for listing page as well in detail page)
+                </td>
             </tr>
 
             <tr>
                 <td><code>get_the_content()</code> / <code>the_content()</code></td>
                 <td>Post Content</td>
-                <td>Returns / Echoes the content of the current post. (can be used for listing page as well in detail page)</td>
+                <td>Returns / Echoes the content of the current post. (can be used for listing page as well in detail
+                    page)</td>
             </tr>
             <tr>
                 <td><code>get_permalink()</code></td>
                 <td>Post URL</td>
-                <td>Returns the permalink (URL) of the current post. (can be used for listing page as well in detail page)</td>
+                <td>Returns the permalink (URL) of the current post. (can be used for listing page as well in detail
+                    page)</td>
             </tr>
             <tr>
                 <td><code>the_excerpt()</code></td>
                 <td>Post Summary</td>
-                <td>Echoes a short summary or trimmed version of the post content. (can be used for listing page as well in detail page)</td>
+                <td>Echoes a short summary or trimmed version of the post content. (can be used for listing page as well
+                    in detail page)</td>
             </tr>
 
             <tr>
@@ -1213,7 +1249,9 @@ add_filter('get_search_form', 'custom_search_placeholder');
             <tr>
                 <td><code>get_query_var('')</code></td>
                 <td>For Query Parameter from the URL</td>
-                <td>only works for predefined or registered query vars in WordPress. Custom URL params eg: <code>?select-category=xyz</code> will not work unless we explicitly register them.</td>
+                <td>only works for predefined or registered query vars in WordPress. Custom URL params eg:
+                    <code>?select-category=xyz</code> will not work unless we explicitly register them.
+                </td>
             </tr>
             <tr>
                 <td><code>get_query_var('paged')</code></td>
@@ -1294,7 +1332,8 @@ add_filter('get_search_form', 'custom_search_placeholder');
         </tbody>
     </table>
 
-    <h4>📍 You can refer this 👉 <a href="https://github.com/TalibKweb/cust_theme_new_proj" target="_blank">repository</a>
+    <h4>📍 You can refer this 👉 <a href="https://github.com/TalibKweb/cust_theme_new_proj"
+            target="_blank">repository</a>
         for reference of a Custom Theme in WordPress </h4>
 
 

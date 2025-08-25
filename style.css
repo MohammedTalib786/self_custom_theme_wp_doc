@@ -150,6 +150,11 @@ pre {
     margin: 0;
 }
 
+mark {
+    background: #e1e177;
+    font-family: Consolas;
+}
+
 .tooltip {
     width: fit-content;
     font-size: 13px;
