@@ -8,14 +8,13 @@
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" />
 </head>
 
 <body>
     <button class="scrollToTopBtn "><i class="fa-solid fa-chevron-up"></i></button>
     <h1>Custom Theme Development WordPress - Documentation</h1>
     <hr>
-
 
     <h2>🛠️ Introduction to Custom Theme Development - WordPress</h2>
     <p>A WordPress theme controls the visual presentation of your website, including layout, styles, and templates for
@@ -243,7 +242,9 @@ add_action('after_setup_theme', 'notandas_register_menus');</code></pre>
 
     <p>&uarr; Disable this only when Required Otherwise it will disable the Styling on the Validation Part when Fields
         are Required for Input Otherwise use this if Default CSS not loaded &darr;</p>
-    <pre><code>add_filter('wpcf7_load_css', '__return_true');</code></pre>
+    <div class="code_wrapper">
+        <pre><code>add_filter('wpcf7_load_css', '__return_true');</code></pre>
+    </div>
 
     <h3>Enable support for featured images</h3>
     <div class="code_wrapper">
@@ -512,7 +513,7 @@ add_action('init', 'register_industries_custom_post_type');</code></pre>
     </div>
 
     <h3>Or Add a Basic Snippet</h3>
-
+    <div class="code_wrapper">
     <pre><code class="code_wrapper">&lt;?php
 get_header();
 ?&gt;
@@ -526,7 +527,7 @@ echo "&lt;h2&gt;$title&lt;/h2&gt;";
 &lt;?php 
 get_footer();
 ?&gt;</code></pre>
-
+    </div>
 
 
     <h2>Using <code>get_template_directory_uri</code> to get theme URL:</h2>
@@ -575,7 +576,7 @@ get_footer();
     <div class="code_wrapper">
         <pre><code>&lt;h2&gt;&lt;?php echo get_field('what_we_stand_sec_title') ?&gt;&lt;/h2&gt;</code></pre>
     </div>
-
+ 
     <p>✔️ But using this <code>if():</code> statement method is a good practice (should use it.)</p>
 
     <div class="code_wrapper">
@@ -589,11 +590,12 @@ get_footer();
 
     <p>Fetching Image OR File field (Array Type Specifically)</p>
 
+    <div class="code_wrapper">
     <pre><code>echo "URL:";
 echo get_field('footer_logo', 'option')['url'];
 echo "ALT:";
 echo get_field('footer_logo', 'option')['alt'];</code></pre>
-
+    </div>
 
     <h3>📝 Fetching Repeater Field</h3>
 
@@ -1061,6 +1063,64 @@ add_filter('get_search_form', 'custom_search_placeholder');
 
 
 
+    <h2>📝 Working with Contact Form 7</h2>
+
+    <h3>Usage of Customized Contact Form inside Custom Theme WP</h3>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;!-- Example HTML --&gt;
+&lt;div class="col-md-8"&gt;
+    &lt;form class="position-relative d-flex align-items-center px-2 py-1 rounded-pill"&gt;
+        &lt;input type="email" class="subscribe-input-box bg-transparent"
+            placeholder="Enter Your Email ID" /&gt;
+        &lt;div class="d-flex"&gt;
+            &lt;button type="submit" class="submit-btn gap-3"&gt;
+                &lt;span class="text-uppercase"&gt;Subscribe&lt;/span&gt;
+                &lt;img src="assets/images/Chevron_White_Arrow.png" class="white-arrow" /&gt;
+            &lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+
+
+&lt;!-- Example PHP --&gt;
+&lt;div class="col-md-8" id="newsletter_form_comp"&gt;
+    &lt;?php echo do_shortcode('[contact-form-7 id="65955f3" title="Newsletter Form Footer" html_class="position-relative d-flex align-items-center px-2 py-1 rounded-pill"]'); ?&gt;
+&lt;/div&gt;
+
+
+&lt;!-- Example in Contact Form (Form Tab) --&gt;
+[email* your-email class:subscribe-input-box class:bg-transparent placeholder "Enter Your Email ID" ]
+&lt;div class="d-flex"&gt;&lt;button type="submit" class="submit-btn gap-3"&gt;&lt;span class="text-uppercase"&gt;Subscribe&lt;/span&gt;&lt;img src="assets/images/Chevron_White_Arrow.png" class="white-arrow" /&gt;&lt;/button&gt;&lt;span class="wpcf7-spinner"&gt;&lt;/span&gt;&lt;/div&gt;
+
+<a href="assets/cf7-ref-img-1.png" data-fancybox="gallery" data-caption="cf7 reference">
+    <img src="assets/cf7-ref-img-1.png" />
+</a></code></pre>
+    </div>
+
+
+
+    <h3>Mail Settings of Conctact Form 7 (Using custom GMail SMTP)</h3>
+
+    <div class="code_wrapper no_copy_btn">
+        <a href="assets/basic-mail-settings-cf7.png" data-fancybox="gallery" data-caption="cf7 Mail Settings">
+            <img src="assets/basic-mail-settings-cf7.png" />
+        </a>
+    </div>
+
+
+
+    <h3>SMTP Setting of Contact Form 7 (Using "Easy WP SMTP" plugin)</h3>
+
+    <div class="code_wrapper no_copy_btn " >
+        <p>Create a Custom GMail SMTP Guide. <a href="https://chatgpt.com/share/68c05f57-4474-800b-b698-090037e8056f" >Click here</a></p>
+        <a href="assets/basic-smtp-settings.png" data-fancybox="gallery" data-caption="SMTP Settings">
+            <img src="assets/basic-smtp-settings.png" />
+        </a>
+    </div>
+
+
+
 
     <h2>🖋️ All the Important Functions and Queries in one Table</h2>
 
@@ -1336,6 +1396,9 @@ add_filter('get_search_form', 'custom_search_placeholder');
             target="_blank">repository</a>
         for reference of a Custom Theme in WordPress </h4>
 
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
 
     <script src="script.js"></script>
 </body>

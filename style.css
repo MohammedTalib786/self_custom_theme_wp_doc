@@ -112,7 +112,8 @@ blockquote {
 }
 
 button.copy_btn {
-    background: #2d2d3a;
+    /* background: #2d2d3a; */
+    background: transparent;
     padding: 0;
     margin: 0;
     border: 0;
@@ -132,6 +133,15 @@ button.copy_btn {
     pointer-events: all;
     transition: all .2s ease-in-out;
     top: 15px;
+}
+
+.no_copy_btn button.copy_btn {
+    display: none;
+}
+
+.code_wrapper img {
+    width: 100%;
+    padding: 10px 0px;
 }
 
 .copy_btn i {
