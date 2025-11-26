@@ -3,11 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Custom Theme WordPress - Documentation</title>
+    <title>Custom Theme Development WordPress - Documentation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css">
+    <link rel="website icon" href="./assets/favicon.webp"  >
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" />
 </head>
 
@@ -312,6 +313,59 @@ add_action('init', 'register_industries_custom_post_type');</code></pre>
     </div>
 
 
+    <h3>Register CPT Taxonomy:</h3>
+    <div class="code_wrapper">
+        <pre><code>function register_main_collections_taxonomy() {
+    $labels = [
+        'name'              =&gt; 'Collections',
+        'singular_name'     =&gt; 'Collections',
+        'search_items'      =&gt; 'Search Collection',
+        'all_items'         =&gt; 'All Collections',
+        'parent_item'       =&gt; 'Parent Collection',
+        'parent_item_colon' =&gt; 'Parent Collection:',
+        'edit_item'         =&gt; 'Edit Collection',
+        'update_item'       =&gt; 'Update Collection',
+        'add_new_item'      =&gt; 'Add New Collection',
+        'new_item_name'     =&gt; 'New Collection Name',
+        'menu_name'         =&gt; 'Collections',
+    ];
+
+    $args = [
+        'hierarchical'      =&gt; true, // true = behaves like categories, false = like tags
+        'labels'            =&gt; $labels,
+        'show_ui'           =&gt; true,
+        'show_admin_column' =&gt; true,
+        'query_var'         =&gt; true,
+        // 'rewrite'           =&gt; ['slug' =&gt; 'collection-category'],
+        'rewrite'           =&gt; ['slug' =&gt; 'collections'],
+        'show_in_rest'      =&gt; true,
+    ];
+    register_taxonomy('collections', ['products'], $args);
+}
+add_action('init', 'register_main_collections_taxonomy');</code></pre>
+    </div>
+
+
+
+    <h3>Fething all taxonomy terms instead of 10 in taxonomy terms page:</h3>
+    <p>Sometimes it causes issue if the items are more than 10 it slice it to only 10 posts. We can use this code to
+        tackle this issue.</p>
+    <div class="code_wrapper">
+        <pre><code>add_action('pre_get_posts', function ($query) {
+    if (!is_admin() && $query->is_tax('collections') && $query->is_main_query()) {
+        $query->set('posts_per_page', -1);  // or number like 20
+    }
+});</code></pre>
+    </div>
+
+
+
+
+
+
+
+
+
     <h2>👉 Example Usecase of a <code>header.php</code> File</h2>
 
 
@@ -514,7 +568,7 @@ add_action('init', 'register_industries_custom_post_type');</code></pre>
 
     <h3>Or Add a Basic Snippet</h3>
     <div class="code_wrapper">
-    <pre><code class="code_wrapper">&lt;?php
+        <pre><code class="code_wrapper">&lt;?php
 get_header();
 ?&gt;
 
@@ -576,7 +630,7 @@ get_footer();
     <div class="code_wrapper">
         <pre><code>&lt;h2&gt;&lt;?php echo get_field('what_we_stand_sec_title') ?&gt;&lt;/h2&gt;</code></pre>
     </div>
- 
+
     <p>✔️ But using this <code>if():</code> statement method is a good practice (should use it.)</p>
 
     <div class="code_wrapper">
@@ -591,7 +645,7 @@ get_footer();
     <p>Fetching Image OR File field (Array Type Specifically)</p>
 
     <div class="code_wrapper">
-    <pre><code>echo "URL:";
+        <pre><code>echo "URL:";
 echo get_field('footer_logo', 'option')['url'];
 echo "ALT:";
 echo get_field('footer_logo', 'option')['alt'];</code></pre>
@@ -930,6 +984,263 @@ endif;
     <p>or you can manually add it from wp backend from acf</p>
 
 
+
+    <h3>⭐ Taxonomy Template File:</h3>
+
+
+    <p>This file is a taxonomy archive template, automatically loaded when visiting URLs like:</p>
+
+    <div class="code_wrapper">
+        <pre><code>/collections/marble/
+/collections/granite/
+/collections/onyx/</code></pre>
+    </div>
+
+
+    <p>create it in the root file of theme
+    <pre><code></code>wp-content/themes/neotrastones/taxonomy-collections.php</pre>
+    </p>
+
+
+    <h4><strong>This template controls:</strong></h4>
+    <h4>✔ Displaying the current taxonomy term</h4>
+
+    <div class="code_wrapper">
+        <pre><code>$term = get_queried_object();
+echo $term->name;
+echo $term->description;</code></pre>
+    </div>
+
+
+    <h4>✔ Querying posts inside this taxonomy</h4>
+
+    <div class="code_wrapper">
+        <pre><code>if ( have_posts() ) :
+    while ( have_posts() ) : the_post();
+        // Display each post belonging to this taxonomy term
+    endwhile;
+endif;
+
+and inside of it, we can use the_title(), the_permalink() and all those functions that we use to fetch</code></pre>
+    </div>
+
+
+    <h4>✔ Used to list all collections:</h4>
+
+    <div class="code_wrapper">
+        <pre><code>$terms = get_terms([
+    'taxonomy' => 'collections',
+    'hide_empty' => false
+]);
+</code></pre>
+    </div>
+
+
+
+
+    <h4>✔ Using ACF fileds of taxonomy:</h4>
+
+    <div class="code_wrapper">
+        <pre><code>&lt;?php if (get_field('spotlight_sub_title', $term)): ?&gt;
+    &lt;h1 class="title"&gt;&lt;?php the_field('spotlight_sub_title', $term) ?&gt;&lt;/h1&gt;
+&lt;?php endif; ?&gt;</code></pre>
+    </div>
+
+
+    <h3>⭐ Template File:</h3>
+    <p>we can use some template functions in the page template files</p>
+    <pre><code>wp-content/themes/neotrastones/templates/collections-page.php</code></pre>
+
+    <p>This is a custom page template for listing all taxonomy terms with ACF fields.</p>
+
+
+    <h4><strong>What it does:</strong></h4>
+    <h4>✔ Fetch all taxonomy terms</h4>
+
+
+    <div class="code_wrapper">
+        <pre><code>$terms = get_terms([
+    'taxonomy' => 'collections',
+    'hide_empty' => false
+]);
+</code></pre>
+    </div>
+
+    <h4>✔ Display term data</h4>
+    <p>From $term you can access:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Meaning</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td><code>$term->term_id</code></td>
+                <td>ID of taxonomy term</td>
+            </tr>
+            <tr>
+                <td><code>$term->name</code></td>
+                <td>Name of term</td>
+            </tr>
+            <tr>
+                <td><code>$term->slug</code></td>
+                <td>Used in URLs</td>
+            </tr>
+            <tr>
+                <td><code>$term->description</code></td>
+                <td>Term description</td>
+            </tr>
+            <tr>
+                <td><code>$term->count</code></td>
+                <td>Number of posts in this term</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <h4>✔ ACF Term Fields</h4>
+
+    <p>Fetch acf term fields in the page tamplate</p>
+    <p>eg: code</p>
+
+    <div class="code_wrapper">
+        <pre><code >&lt;?php
+if (!empty($terms) &amp;&amp; !is_wp_error($terms)):
+    foreach ($terms as $term) :
+        $term_link = get_term_link($term);
+?&gt;
+        &lt;div class="col-6 col-lg-4 mb-4"&gt;
+            &lt;a href="&lt;?php echo esc_url($term_link) ?&gt;" class="p-0 colBox position-relative"&gt;
+                &lt;div class="collectionpagePic"&gt;
+                    &lt;img src="&lt;?php echo get_field('spotlight_bg_image', $term-&gt;taxonomy  . '_' . $term-&gt;term_id)['url'] ?&gt;" alt=""&gt;
+                &lt;/div&gt;
+                &lt;div class="d-none d-lg-flex productName"&gt;
+                    &lt;span class="LinkIcon"&gt;&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class="colName"&gt;&lt;?php echo esc_html($term-&gt;name) ?&gt;&lt;/div&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+&lt;?php
+    endforeach;
+else :
+?&gt;
+    &lt;p&gt;No Data Found!&lt;/p&gt;
+&lt;?php endif; ?&gt;</code></pre>
+    </div>
+
+    <p>In the above example code there is use of functions like <code>get_term_link()</code> and use of
+        <code>get_field()</code> in how to fetch the taxonomy term in page template
+    </p>
+
+
+
+
+    <h3>⭐ Core WordPress Taxonomy Functions</h3>
+
+    <h4>🔹 <code>get_terms()</code></h4>
+    <p>Fetches many terms.</p>
+
+    <div class="code_wrapper">
+        <pre><code >get_terms([
+    'taxonomy' => 'collections',
+    'hide_empty' => false
+]);</code></pre>
+    </div>
+
+    <p><strong>Arguments include:</strong></p>
+
+
+
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td><code>taxonomy</code></td>
+                <td>Name of taxonomy</td>
+            </tr>
+            <tr>
+                <td><code>hide_empty</code></td>
+                <td>true = only terms with posts</td>
+            </tr>
+            <tr>
+                <td><code>parent</code></td>
+                <td>fetch only children of a term</td>
+            </tr>
+            <tr>
+                <td><code>orderby</code></td>
+                <td>name, slug, id, count</td>
+            </tr>
+            <tr>
+                <td><code>order</code></td>
+                <td>ASC/DESC</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+
+    <h4>🔹 <code>get_term()</code></h4>
+    <p>Fetch a single term by ID or slug:</p>
+    <div class="code_wrapper">
+        <pre><code >$term = get_term($id, 'collections');</code></pre>
+    </div>
+
+
+    <h4>🔹 <code>get_term_link()</code></h4>
+    <p>Creates permalink to taxonomy archive:</p>
+
+    <div class="code_wrapper">
+        <pre><code >echo get_term_link($term);</code></pre>
+    </div>
+
+    <p>Output example:</p>
+
+    <div class="code_wrapper">
+        <pre><code >/collections/white-marble/</code></pre>
+    </div>
+
+
+    <h4>🔹 <code>get_queried_object()</code></h4>
+
+    <p>Used in taxonomy.php to get the current term:</p>
+    <div class="code_wrapper">
+        <pre><code >$term = get_queried_object();</code></pre>
+    </div>
+
+
+    <h4>🔹 <code>the_terms()</code></h4>
+
+    <p>Display terms attached to a post:</p>
+    <div class="code_wrapper">
+        <pre><code >the_terms(get_the_ID(), 'collections');</code></pre>
+    </div>
+
+
+    <h4>🔹 <code>wp_get_post_terms()</code></h4>
+
+    <p>Get all taxonomy terms assigned to a post:</p>
+    <div class="code_wrapper">
+        <pre><code >wp_get_post_terms($post->ID, 'collections');</code></pre>
+    </div>
+
+
+
+
+
+
+
+
+
     <h3>✅ Permalinks Flush (Important)</h3>
 
     <p>After creating your custom taxonomy and templates:</p>
@@ -1099,24 +1410,21 @@ add_filter('get_search_form', 'custom_search_placeholder');
     </div>
 
 
-
     <h3>Mail Settings of Conctact Form 7 (Using custom GMail SMTP)</h3>
 
     <div class="code_wrapper no_copy_btn">
-        <a href="assets/basic-mail-settings-cf7.png" data-fancybox="gallery" data-caption="cf7 Mail Settings">
-            <img src="assets/basic-mail-settings-cf7.png" />
-        </a>
+        <pre><code><a href="assets/basic-mail-settings-cf7.png" data-fancybox="gallery" data-caption="cf7 Mail Settings">
+<img src="assets/basic-mail-settings-cf7.png" />
+</a></code></pre>
     </div>
 
 
-
     <h3>SMTP Setting of Contact Form 7 (Using "Easy WP SMTP" plugin)</h3>
-
-    <div class="code_wrapper no_copy_btn " >
-        <p>Create a Custom GMail SMTP Guide. <a href="https://chatgpt.com/share/68c05f57-4474-800b-b698-090037e8056f" >Click here</a></p>
-        <a href="assets/basic-smtp-settings.png" data-fancybox="gallery" data-caption="SMTP Settings">
-            <img src="assets/basic-smtp-settings.png" />
-        </a>
+    <p>Create a Custom GMail SMTP Guide. <a href="https://chatgpt.com/share/68c05f57-4474-800b-b698-090037e8056f"
+            target="_blank">Click here</a></p>
+    <div class="code_wrapper no_copy_btn ">
+        <pre><code><a href="assets/basic-smtp-settings.png" data-fancybox="gallery" data-caption="SMTP Settings">
+<img src="assets/basic-smtp-settings.png" /></a></code></pre>
     </div>
 
 
@@ -1381,12 +1689,6 @@ add_filter('get_search_form', 'custom_search_placeholder');
                 <td><code>get_search_query()</code></td>
                 <td>Custom WP Function for Search Query</td>
                 <td>Returns the search query string entered by the user.</td>
-            </tr>
-
-            <tr>
-                <td><code>&lt;script&gt;document.write(new Date().getFullYear())&lt;/script&gt;</code></td>
-                <td>JavaScript</td>
-                <td>Client-side JS that dynamically shows the current year (used for copyright).</td>
             </tr>
 
         </tbody>
